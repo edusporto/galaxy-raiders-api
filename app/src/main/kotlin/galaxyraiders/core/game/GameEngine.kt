@@ -89,6 +89,12 @@ class GameEngine(
         (first, second) ->
       if (first.impacts(second)) {
         first.collideWith(second, GameEngineConfig.coefficientRestitution)
+
+        val missile = if (first is Missile) first else if (second is Missile) second else null
+        val asteroid = if (first is Asteroid) first else if (second is Asteroid) second else null
+        if (missile != null && asteroid != null) {
+          this.field.generateExplosion(asteroid)
+        }
       }
     }
   }
@@ -97,11 +103,13 @@ class GameEngine(
     this.field.moveShip()
     this.field.moveAsteroids()
     this.field.moveMissiles()
+    this.field.moveExplosions()
   }
 
   fun trimSpaceObjects() {
     this.field.trimAsteroids()
     this.field.trimMissiles()
+    this.field.trimExplosions()
   }
 
   fun generateAsteroids() {
